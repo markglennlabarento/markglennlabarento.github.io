@@ -1,0 +1,44 @@
+@import "screen.css";
+
+body {
+	overflow-x: hidden;
+}
+.jumbotron {
+	margin: 0;
+}
+.skills{
+	padding: 50px;
+	background-color: white;
+}
+
+.progress {
+	height: 50px;
+}
+
+.progress-bar {
+	background-color: #00796B;
+}
+
+.prg {
+	padding: 10px;
+}
+
+.container-fluid {
+	padding: 50px;
+}
+
+.container-fluid > .prj {
+	padding: 20px;
+}
+.container-fluid > .prj > .col-sm > .card {
+    height: 300px;
+    margin: 5px;
+}
+
+.container-fluid > .prj > .col-sm > .card > .card-img-top {
+    height: 200px;
+}
+
+.container-fluid > .prj > .col-sm > .card > .card-body {
+    height: 100px;
+}
