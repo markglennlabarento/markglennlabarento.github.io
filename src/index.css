@@ -1,0 +1,81 @@
+:root {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #514d5b;
+  background: #fff;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --text: #514d5b;
+  --text-h: #17151d;
+  --bg: #fff;
+  --surface: rgba(255, 255, 255, 0.84);
+  --border: #ebe8ee;
+  --accent: #9060d9;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  color: #aaa5b4;
+  background: #17161c;
+
+  --text: #aaa5b4;
+  --text-h: #f3f0f7;
+  --bg: #17161c;
+  --surface: rgba(35, 33, 42, 0.88);
+  --border: #34313c;
+  --accent: #c19af4;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] .brand-mark {
+  color: #17151d;
+  background: #f3f0f7;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background: var(--bg);
+}
+
+body,
+button,
+a {
+  font-family: inherit;
+}
+
+a:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 4px;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+::selection {
+  color: var(--text-h);
+  background: rgba(144, 96, 217, 0.2);
+}
