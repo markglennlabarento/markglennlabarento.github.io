@@ -12,6 +12,8 @@ dist
 dist-ssr
 .github
 *.local
+.dev.vars
+.wrangler
 
 # Editor directories and files
 .vscode/*
