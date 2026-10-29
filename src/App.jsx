@@ -11,9 +11,7 @@ const sections = [
 ]
 
 function App() {
-  const [theme, setTheme] = useState(() =>
-    window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
-  )
+  const [theme, setTheme] = useState('dark')
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme
