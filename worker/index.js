@@ -2,7 +2,20 @@ const portfolioContext = `
 Name: Mark Glenn Labarento
 Role: Software Engineer
 Portfolio description: A growing collection of projects, experiments, and things made for the web.
-The portfolio currently does not provide specific project, skill, education, location, or contact details.
+GitHub profile: https://github.com/markglennlabarento
+Public location listed on GitHub: Philippines
+Public GitHub repository snapshot (checked 2026-10-31):
+Favorite Projects: pulse.
+Skills: C++, JavaScript, React, HTML, CSS, Git, GitHub.
+Currently Learning: Python.
+Contact:
+- Twitter: MarkLabarento
+- LinkedIn: Mark Glenn Labarento
+- Facebook: deadly.glenn
+- Instagram: markglennlabarento
+- Dribbble: markglennlabarento
+- Discord: Obito Uchiha#8112
+Treat this as a snapshot of public repository names and GitHub language labels, not proof of authorship, project details, or skill level. Do not invent details beyond this context.
 `
 
 const allowedLocalOrigins = new Set([
