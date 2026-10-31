@@ -43,40 +43,40 @@ export default {
     const origin = request.headers.get('Origin')
 
     if (url.pathname !== '/api/chat') {
-      return jsonResponse({ error: 'Not found.' }, 404)
+      return jsonResponse({ error: 'Chat is unavailable here.' }, 404)
     }
 
     const originAllowed = !origin
       || origin === env.ALLOWED_ORIGIN
       || allowedLocalOrigins.has(origin)
     if (!originAllowed) {
-      return jsonResponse({ error: 'This origin is not allowed.' }, 403)
+      return jsonResponse({ error: 'Chat is unavailable on this page.' }, 403)
     }
 
     if (request.method === 'OPTIONS') {
       return jsonResponse(null, 204, origin)
     }
     if (request.method !== 'POST') {
-      return jsonResponse({ error: 'Method not allowed.' }, 405, origin)
+      return jsonResponse({ error: 'Please try sending your question again.' }, 405, origin)
     }
     const { success } = await env.CHAT_RATE_LIMITER.limit({
       key: request.headers.get('CF-Connecting-IP') || 'unknown',
     })
     if (!success) {
-      return jsonResponse({ error: 'Too many questions. Please wait a minute and try again.' }, 429, origin)
+      return jsonResponse({ error: 'You’ve sent several questions in a short time. Please wait a minute, then try again.' }, 429, origin)
     }
     if (Number(request.headers.get('Content-Length')) > 8000) {
-      return jsonResponse({ error: 'Request is too large.' }, 413, origin)
+      return jsonResponse({ error: 'That message is a little too long. Please shorten it and try again.' }, 413, origin)
     }
     if (!env.GEMINI_API_KEY) {
-      return jsonResponse({ error: 'Chat is not configured yet.' }, 503, origin)
+      return jsonResponse({ error: 'Chat is taking a short break. Please try again in a few minutes.' }, 503, origin)
     }
 
     let body
     try {
       body = await request.json()
     } catch {
-      return jsonResponse({ error: 'Request must contain valid JSON.' }, 400, origin)
+      return jsonResponse({ error: 'We couldn’t read that question. Please try sending it again.' }, 400, origin)
     }
 
     if (
@@ -91,7 +91,7 @@ export default {
       ))
       || body.messages.at(-1)?.role !== 'user'
     ) {
-      return jsonResponse({ error: 'Please send a question of 500 characters or fewer.' }, 400, origin)
+      return jsonResponse({ error: 'Please keep your question under 500 characters and try again.' }, 400, origin)
     }
 
     let upstream
@@ -119,14 +119,14 @@ export default {
         },
       )
     } catch {
-      return jsonResponse({ error: 'Could not reach Google Gemini. Please try again.' }, 502, origin)
+      return jsonResponse({ error: 'Chat couldn’t answer just now. Please try again in a few minutes.' }, 502, origin)
     }
 
     let result
     try {
       result = await upstream.json()
     } catch {
-      return jsonResponse({ error: 'Google Gemini returned an invalid response.' }, 502, origin)
+      return jsonResponse({ error: 'Chat couldn’t answer just now. Please try again in a few minutes.' }, 502, origin)
     }
 
     if (!upstream.ok) {
@@ -136,15 +136,9 @@ export default {
         message: result.error?.message,
       })
       if (upstream.status === 429) {
-        return jsonResponse({ error: 'The Gemini free-tier limit was reached. Please try again later.' }, 429, origin)
+        return jsonResponse({ error: 'Chat is busy right now. Please wait a minute and try again.' }, 429, origin)
       }
-      if (upstream.status === 401 || upstream.status === 403) {
-        return jsonResponse({ error: 'Gemini rejected the API key. Check that the key is valid and Gemini API access is enabled.' }, 502, origin)
-      }
-      if (upstream.status === 404) {
-        return jsonResponse({ error: 'The configured Gemini model is unavailable. Check the model name in the Worker.' }, 502, origin)
-      }
-      return jsonResponse({ error: `Google Gemini returned an error (${upstream.status}). Check the Worker logs for details.` }, 502, origin)
+      return jsonResponse({ error: 'Chat couldn’t answer just now. Please try again in a few minutes.' }, 502, origin)
     }
 
     const answer = result.candidates?.[0]?.content?.parts
@@ -152,7 +146,7 @@ export default {
       .join('')
       .trim()
     if (!answer) {
-      return jsonResponse({ error: 'Google Gemini did not return an answer.' }, 502, origin)
+      return jsonResponse({ error: 'Chat couldn’t answer just now. Please try again in a few minutes.' }, 502, origin)
     }
     return jsonResponse({ answer }, 200, origin)
   },

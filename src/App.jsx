@@ -61,18 +61,21 @@ function App() {
       }
       if (!response.ok) {
         if (response.status === 429) {
-          throw new Error('You’ve sent a lot of questions in a short time. Please wait a minute and try again.')
+          throw new Error('Chat is busy right now. Please wait a minute and try again.')
         }
         if (response.status === 503) {
-          throw new Error('Chat is temporarily unavailable. Please try again later.')
+          throw new Error('Chat is taking a short break. Please try again in a few minutes.')
+        }
+        if (response.status === 413) {
+          throw new Error('That message is a little too long. Please shorten it and try again.')
         }
         if (response.status === 400) {
-          throw new Error('Please check your question and try again.')
+          throw new Error('Please keep your question under 500 characters and try again.')
         }
-        throw new Error('Sorry, chat couldn’t answer just now. Please try again in a moment.')
+        throw new Error('Chat couldn’t answer just now. Please try again in a few minutes.')
       }
       if (typeof data?.answer !== 'string' || !data.answer.trim()) {
-        throw new Error('Sorry, chat couldn’t answer just now. Please try again in a moment.')
+        throw new Error('Chat couldn’t answer just now. Please try again in a few minutes.')
       }
       setMessages((current) => [...current, { role: 'assistant', text: data.answer }])
     } catch (requestError) {
@@ -80,8 +83,8 @@ function App() {
       setQuestion(text)
       setError(
         requestError instanceof TypeError
-          ? 'Couldn’t reach chat. Please check your internet connection and try again.'
-          : requestError.message || 'Sorry, chat couldn’t answer just now. Please try again in a moment.',
+          ? 'We couldn’t connect to chat. Please check your internet connection and try again.'
+          : requestError.message || 'Chat couldn’t answer just now. Please try again in a few minutes.',
       )
     } finally {
       setSending(false)

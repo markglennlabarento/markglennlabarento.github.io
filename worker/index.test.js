@@ -36,6 +36,31 @@ describe('Gemini Worker', () => {
     assert.equal(response.status, 400)
   })
 
+  it('returns a friendly message when chat is not configured', async () => {
+    const response = await worker.fetch(new Request('https://worker.example/api/chat', {
+      method: 'POST',
+      headers: { Origin: origin, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: [{ role: 'user', text: 'Hello' }] }),
+    }), { ...env, GEMINI_API_KEY: undefined })
+
+    assert.equal(response.status, 503)
+    assert.match((await response.json()).error, /try again in a few minutes/i)
+  })
+
+  it('returns a friendly message when chat is busy', async () => {
+    const response = await worker.fetch(new Request('https://worker.example/api/chat', {
+      method: 'POST',
+      headers: { Origin: origin, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: [{ role: 'user', text: 'Hello' }] }),
+    }), {
+      ...env,
+      CHAT_RATE_LIMITER: { limit: async () => ({ success: false }) },
+    })
+
+    assert.equal(response.status, 429)
+    assert.match((await response.json()).error, /wait a minute/i)
+  })
+
   it('returns Gemini text and allows the portfolio origin', async () => {
     globalThis.fetch = async (url, options) => {
       assert.match(url, /gemini-3\.1-flash-lite:generateContent$/)
