@@ -12,7 +12,7 @@ Contact:
 - Twitter: MarkLabarento
 - LinkedIn: Mark Glenn Labarento
 - Facebook: deadly.glenn
-- Instagram: markglennlabarento
+- Instagram: labarentomarkglenn
 - Dribbble: markglennlabarento
 - Discord: Obito Uchiha#8112
 Treat this as a snapshot of public repository names and GitHub language labels, not proof of authorship, project details, or skill level. Do not invent details beyond this context.

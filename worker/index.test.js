@@ -42,7 +42,8 @@ describe('Gemini Worker', () => {
       assert.equal(options.headers['x-goog-api-key'], env.GEMINI_API_KEY)
       const requestBody = JSON.parse(options.body)
       assert.match(requestBody.system_instruction.parts[0].text, /https:\/\/github\.com\/markglennlabarento/)
-      assert.match(requestBody.system_instruction.parts[0].text, /React-JS-CRUD/)
+      assert.match(requestBody.system_instruction.parts[0].text, /Favorite Projects: pulse/)
+      assert.match(requestBody.system_instruction.parts[0].text, /Instagram: labarentomarkglenn/)
       return Response.json({
         candidates: [{ content: { parts: [{ text: 'Hello from Gemini.' }] } }],
       })
