@@ -107,7 +107,7 @@ export default {
           body: JSON.stringify({
             system_instruction: {
               parts: [{
-                text: `Answer visitor questions using only these portfolio facts. If a detail is missing, say it is not included in the portfolio. Do not invent personal details or projects.\n${portfolioContext}`,
+                text: `You are a general-purpose AI assistant. Answer questions about any topic helpfully using your general knowledge; do not limit answers to the portfolio. Only use the portfolio facts below when the visitor is specifically asking about Mark. Do not say information is missing from the portfolio for unrelated questions. If a message is unclear, misspelled, or appears to be a random word, ask a brief, friendly clarification question instead of assuming it is about Mark. For questions about Mark, if a detail is missing, say it is not included in the portfolio. Do not invent personal details, projects, or credentials.\n\n${portfolioContext}`,
               }],
             },
             contents: body.messages.map(({ role, text }) => ({

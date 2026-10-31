@@ -2,7 +2,7 @@
 
 ## Gemini Q&A
 
-The chat UI calls a Cloudflare Worker, which proxies requests to the Gemini API. The Gemini key stays in the Worker and is never included in the static site.
+The chat UI lets visitors ask general questions or ask about the portfolio. A Cloudflare Worker proxies requests to the Gemini API, keeping the Gemini key out of the static site. For questions about Mark, Gemini is instructed to rely only on the portfolio context.
 
 1. Create a Gemini API key in [Google AI Studio](https://aistudio.google.com/apikey).
 2. Install dependencies with `npm install`, then authenticate Wrangler with `npx wrangler login`.

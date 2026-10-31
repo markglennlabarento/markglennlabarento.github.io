@@ -147,15 +147,15 @@ function App() {
       >
         <div className="chat-header">
           <div>
-            <h2 id="chat-title">Ask about Mark</h2>
-            <p>AI answers based on the information on this portfolio.</p>
+            <h2 id="chat-title">Ask me anything</h2>
+            <p>Ask about Mark or any other topic.</p>
           </div>
           <button className="chat-close" type="button" aria-label="Close chat" onClick={() => setChatOpen(false)}>
             ×
           </button>
         </div>
         <div className="chat-messages" ref={messagesRef} aria-live="polite" aria-busy={sending}>
-          <p className="chat-welcome">Hi! Ask me about Mark's work or skills. I’ll let you know if something isn’t covered here.</p>
+          <p className="chat-welcome">Hi! Ask me anything. I can answer general questions and tell you about Mark using the information on this portfolio.</p>
           {messages.map((message, index) => (
             <p className={`chat-message ${message.role}`} key={`${index}-${message.role}`}>
               {message.text}
