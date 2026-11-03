@@ -8,5 +8,11 @@
     stroke-linejoin="round"
     stroke-width="4"
   />
-  <path d="m39 25 4-9-9 5 4 1Z" fill="#c19af4" stroke="#f3f0f7" stroke-linejoin="round" stroke-width="1.5"/>
+  <path
+    d="m39 25 4-9-9 5 4 1Z"
+    fill="#c19af4"
+    stroke="#f3f0f7"
+    stroke-linejoin="round"
+    stroke-width="1.5"
+  />
 </svg>
