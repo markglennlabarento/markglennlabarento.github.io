@@ -32,7 +32,7 @@
   color-scheme: light;
 }
 
-:root[data-theme='dark'] .brand-mark {
+:root[data-theme='light'] .brand-mark {
   color: #17151d;
   background: #f3f0f7;
 }

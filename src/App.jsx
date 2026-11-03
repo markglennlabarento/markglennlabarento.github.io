@@ -22,8 +22,10 @@ function App() {
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme
-    document.querySelector('link[rel="icon"]').href =
-      theme === 'dark' ? '/mark-favicon.svg?v=2' : '/mark-favicon-light.svg?v=2'
+    document.querySelector('link[rel="icon"]')?.setAttribute(
+      'href',
+      `/mark-favicon${theme === 'light' ? '-light' : ''}.svg?v=5`,
+    )
   }, [theme])
 
   useEffect(() => {
@@ -97,7 +99,11 @@ function App() {
     <main className="portfolio">
       <header className="topbar">
         <a className="brand" href="#home" aria-label="Portfolio home">
-          <span className="brand-mark" aria-hidden="true">✦</span>
+          <img
+            className="brand-mark"
+            src={`/mark-favicon${theme === 'light' ? '-light' : ''}.svg?v=5`}
+            alt=""
+          />
           <span>Mark Glenn Labarento</span>
         </a>
         <button
