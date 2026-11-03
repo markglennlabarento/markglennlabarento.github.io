@@ -41,11 +41,6 @@
   background: #17151d;
 }
 
-.brand-mark svg {
-  width: 30px;
-  height: 30px;
-}
-
 .theme-toggle {
   display: grid;
   width: 40px;

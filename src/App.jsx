@@ -97,25 +97,7 @@ function App() {
     <main className="portfolio">
       <header className="topbar">
         <a className="brand" href="#home" aria-label="Portfolio home">
-          <span className="brand-mark" aria-hidden="true">
-            <svg viewBox="0 0 48 48">
-              <path
-                d="M9 35c-.5-8-2-20 3-20 4 0 8 16 12 16s8-16 12-16c4 0 5 7 4 10"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="4"
-              />
-              <path
-                d="m39 25 4-9-9 5 4 1Z"
-                fill="var(--accent)"
-                stroke="currentColor"
-                strokeLinejoin="round"
-                strokeWidth="1.5"
-              />
-            </svg>
-          </span>
+          <span className="brand-mark" aria-hidden="true">✦</span>
           <span>Mark Glenn Labarento</span>
         </a>
         <button
