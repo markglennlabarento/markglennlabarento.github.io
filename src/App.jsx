@@ -22,6 +22,8 @@ function App() {
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme
+    document.querySelector('link[rel="icon"]').href =
+      theme === 'dark' ? '/mark-favicon.svg?v=2' : '/mark-favicon-light.svg?v=2'
   }, [theme])
 
   useEffect(() => {
