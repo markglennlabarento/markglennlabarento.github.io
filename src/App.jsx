@@ -50,7 +50,6 @@ function App() {
     setQuestion('')
     setError('')
     setSending(true)
-    let assistantAdded = false
 
     try {
       const response = await fetch(import.meta.env.VITE_GEMINI_API_URL || '/api/chat', {
@@ -58,6 +57,12 @@ function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: conversation.slice(-8) }),
       })
+      let data
+      try {
+        data = await response.json()
+      } catch {
+        data = null
+      }
       if (!response.ok) {
         if (response.status === 429) {
           throw new Error('Chat is busy right now. Please wait a minute and try again.')
@@ -73,55 +78,12 @@ function App() {
         }
         throw new Error('Chat couldn’t answer just now. Please try again in a few minutes.')
       }
-      if (!response.body) {
+      if (typeof data?.answer !== 'string' || !data.answer.trim()) {
         throw new Error('Chat couldn’t answer just now. Please try again in a few minutes.')
       }
-
-      const reader = response.body.getReader()
-      const decoder = new TextDecoder()
-      let buffer = ''
-      let answer = ''
-
-      function readEvent(event) {
-        const data = event
-          .split(/\r?\n/)
-          .filter((line) => line.startsWith('data:'))
-          .map((line) => line.slice(5).trimStart())
-          .join('\n')
-        if (!data || data === '[DONE]') return
-
-        const chunk = JSON.parse(data)
-        if (chunk.error) throw new Error('Chat couldn’t answer just now. Please try again in a few minutes.')
-        const text = chunk.candidates?.[0]?.content?.parts
-          ?.map((part) => part.text || '')
-          .join('')
-        if (text) {
-          answer += text
-          if (assistantAdded) {
-            setMessages((current) => [...current.slice(0, -1), { role: 'assistant', text: answer }])
-          } else {
-            assistantAdded = true
-            setMessages((current) => [...current, { role: 'assistant', text: answer }])
-          }
-        }
-      }
-
-      while (true) {
-        const { value, done } = await reader.read()
-        buffer += decoder.decode(value, { stream: !done })
-        let boundary
-        while ((boundary = buffer.match(/\r?\n\r?\n/))) {
-          readEvent(buffer.slice(0, boundary.index))
-          buffer = buffer.slice(boundary.index + boundary[0].length)
-        }
-        if (done) {
-          if (buffer.trim()) readEvent(buffer)
-          break
-        }
-      }
-      if (!answer.trim()) throw new Error('Chat couldn’t answer just now. Please try again in a few minutes.')
+      setMessages((current) => [...current, { role: 'assistant', text: data.answer }])
     } catch (requestError) {
-      setMessages((current) => current.slice(0, assistantAdded ? -2 : -1))
+      setMessages((current) => current.slice(0, -1))
       setQuestion(text)
       setError(
         requestError instanceof TypeError

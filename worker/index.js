@@ -97,7 +97,7 @@ export default {
     let upstream
     try {
       upstream = await fetch(
-        'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:streamGenerateContent?alt=sse',
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent',
         {
           method: 'POST',
           headers: {
@@ -122,13 +122,14 @@ export default {
       return jsonResponse({ error: 'Chat couldn’t answer just now. Please try again in a few minutes.' }, 502, origin)
     }
 
+    let result
+    try {
+      result = await upstream.json()
+    } catch {
+      return jsonResponse({ error: 'Chat couldn’t answer just now. Please try again in a few minutes.' }, 502, origin)
+    }
+
     if (!upstream.ok) {
-      let result
-      try {
-        result = await upstream.json()
-      } catch {
-        return jsonResponse({ error: 'Chat couldn’t answer just now. Please try again in a few minutes.' }, 502, origin)
-      }
       console.error('Gemini API request failed', {
         status: upstream.status,
         providerStatus: result.error?.status,
@@ -140,21 +141,13 @@ export default {
       return jsonResponse({ error: 'Chat couldn’t answer just now. Please try again in a few minutes.' }, 502, origin)
     }
 
-    if (!upstream.body) {
+    const answer = result.candidates?.[0]?.content?.parts
+      ?.map((part) => part.text || '')
+      .join('')
+      .trim()
+    if (!answer) {
       return jsonResponse({ error: 'Chat couldn’t answer just now. Please try again in a few minutes.' }, 502, origin)
     }
-    return new Response(upstream.body, {
-      status: upstream.status,
-      headers: {
-        'Content-Type': 'text/event-stream; charset=utf-8',
-        'Cache-Control': 'no-store',
-        ...(origin && {
-          'Access-Control-Allow-Origin': origin,
-          'Access-Control-Allow-Methods': 'POST, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type',
-          Vary: 'Origin',
-        }),
-      },
-    })
+    return jsonResponse({ answer }, 200, origin)
   },
 }

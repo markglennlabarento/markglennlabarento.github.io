@@ -63,7 +63,7 @@ describe('Gemini Worker', () => {
 
   it('returns Gemini text and allows the portfolio origin', async () => {
     globalThis.fetch = async (url, options) => {
-      assert.match(url, /gemini-3\.1-flash-lite:streamGenerateContent\?alt=sse$/)
+      assert.match(url, /gemini-3\.1-flash-lite:generateContent$/)
       assert.equal(options.headers['x-goog-api-key'], env.GEMINI_API_KEY)
       const requestBody = JSON.parse(options.body)
       assert.match(requestBody.system_instruction.parts[0].text, /You are a general-purpose AI assistant/)
@@ -74,8 +74,8 @@ describe('Gemini Worker', () => {
       assert.match(requestBody.system_instruction.parts[0].text, /https:\/\/github\.com\/markglennlabarento/)
       assert.match(requestBody.system_instruction.parts[0].text, /Favorite Projects: pulse/)
       assert.match(requestBody.system_instruction.parts[0].text, /Instagram: labarentomarkglenn/)
-      return new Response('data: {"candidates":[{"content":{"parts":[{"text":"Hello from Gemini."}]}}]}\n\n', {
-        headers: { 'Content-Type': 'text/event-stream' },
+      return Response.json({
+        candidates: [{ content: { parts: [{ text: 'Hello from Gemini.' }] } }],
       })
     }
 
@@ -87,7 +87,6 @@ describe('Gemini Worker', () => {
 
     assert.equal(response.status, 200)
     assert.equal(response.headers.get('Access-Control-Allow-Origin'), origin)
-    assert.match(response.headers.get('Content-Type'), /text\/event-stream/)
-    assert.match(await response.text(), /Hello from Gemini\./)
+    assert.deepEqual(await response.json(), { answer: 'Hello from Gemini.' })
   })
 })
