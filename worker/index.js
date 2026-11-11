@@ -8,6 +8,7 @@ Public GitHub repository snapshot (checked 2026-10-31):
 Favorite Projects: pulse.
 Skills: C++, JavaScript, React, HTML, CSS, Git, GitHub.
 Currently Learning: Python.
+Personal Fun facts about mark glenn: Gaming.
 Contact:
 - Twitter: MarkLabarento
 - LinkedIn: Mark Glenn Labarento
