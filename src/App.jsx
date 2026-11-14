@@ -1,6 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import heroMark from './assets/hero.png'
+import { ChatService } from './services/ChatService.js'
+import { ThemeService } from './services/ThemeService.js'
 import './App.css'
+
+const chatService = new ChatService({
+  endpoint: import.meta.env.VITE_GEMINI_API_URL || '/api/chat',
+})
+const themeService = new ThemeService()
 
 const sections = [
   { label: 'Me', icon: '☺', color: 'teal' },
@@ -21,11 +28,7 @@ function App() {
   const messagesRef = useRef(null)
 
   useEffect(() => {
-    document.documentElement.dataset.theme = theme
-    document.querySelector('link[rel="icon"]')?.setAttribute(
-      'href',
-      `/mark-favicon${theme === 'light' ? '-light' : ''}.svg?v=5`,
-    )
+    themeService.apply(theme)
   }, [theme])
 
   useEffect(() => {
@@ -52,36 +55,8 @@ function App() {
     setSending(true)
 
     try {
-      const response = await fetch(import.meta.env.VITE_GEMINI_API_URL || '/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: conversation.slice(-8) }),
-      })
-      let data
-      try {
-        data = await response.json()
-      } catch {
-        data = null
-      }
-      if (!response.ok) {
-        if (response.status === 429) {
-          throw new Error('Chat is busy right now. Please wait a minute and try again.')
-        }
-        if (response.status === 503) {
-          throw new Error('Chat is taking a short break. Please try again in a few minutes.')
-        }
-        if (response.status === 413) {
-          throw new Error('That message is a little too long. Please shorten it and try again.')
-        }
-        if (response.status === 400) {
-          throw new Error('Please keep your question under 500 characters and try again.')
-        }
-        throw new Error('Chat couldn’t answer just now. Please try again in a few minutes.')
-      }
-      if (typeof data?.answer !== 'string' || !data.answer.trim()) {
-        throw new Error('Chat couldn’t answer just now. Please try again in a few minutes.')
-      }
-      setMessages((current) => [...current, { role: 'assistant', text: data.answer }])
+      const answer = await chatService.ask(conversation)
+      setMessages((current) => [...current, { role: 'assistant', text: answer }])
     } catch (requestError) {
       setMessages((current) => current.slice(0, -1))
       setQuestion(text)
@@ -101,7 +76,7 @@ function App() {
         <a className="brand" href="#home" aria-label="Portfolio home">
           <img
             className="brand-mark"
-            src={`/mark-favicon${theme === 'light' ? '-light' : ''}.svg?v=5`}
+            src={themeService.getIconPath(theme)}
             alt=""
           />
           <span>Mark Glenn Labarento</span>
