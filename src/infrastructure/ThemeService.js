@@ -1,18 +1,18 @@
 export class ThemeService {
   #root
-  #favicon
+  #iconLink
 
   constructor(
     root = document.documentElement,
-    favicon = document.querySelector('link[rel="icon"]'),
+    iconLink = document.querySelector('link[rel="icon"]'),
   ) {
     this.#root = root
-    this.#favicon = favicon
+    this.#iconLink = iconLink
   }
 
   apply(theme) {
     this.#root.dataset.theme = theme
-    this.#favicon?.setAttribute('href', this.getIconPath(theme))
+    this.#iconLink?.setAttribute('href', this.getIconPath(theme))
   }
 
   getIconPath(theme) {

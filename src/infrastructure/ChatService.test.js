@@ -23,3 +23,22 @@ it('calls fetch with the global receiver and returns the answer', async () => {
   })
   assert.equal(answer, 'Hello!')
 })
+
+it('sends only the most recent eight messages', async () => {
+  let request
+  const service = new ChatService({
+    endpoint: '/api/chat',
+    fetcher: async (_url, options) => {
+      request = JSON.parse(options.body)
+      return Response.json({ answer: 'Hello!' })
+    },
+  })
+
+  await service.ask(Array.from({ length: 10 }, (_, index) => ({
+    role: 'user',
+    text: `Question ${index}`,
+  })))
+
+  assert.equal(request.messages.length, 8)
+  assert.equal(request.messages[0].text, 'Question 2')
+})

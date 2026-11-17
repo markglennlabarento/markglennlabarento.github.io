@@ -1,5 +1,11 @@
 # Portfolio
 
+## Architecture
+
+The frontend is organized into layers: `src/App.jsx` is the presentation layer, `src/application/` coordinates chat behavior, `src/domain/` holds chat rules, and `src/infrastructure/` contains browser and API integrations. `src/main.jsx` wires the infrastructure into the UI.
+
+The Cloudflare Worker in `worker/` is deployed separately from the static portfolio and serves as the backend integration boundary; it is not part of the frontend deployment.
+
 ## Gemini Q&A
 
 The chat UI lets visitors ask general questions or ask about the portfolio. A Cloudflare Worker proxies requests to the Gemini API, keeping the Gemini key out of the static site. For questions about Mark, Gemini is instructed to rely only on the portfolio context.

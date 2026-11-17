@@ -1,4 +1,4 @@
-const errorMessages = {
+const chatErrorMessages = {
   400: 'Please keep your question under 500 characters and try again.',
   413: 'That message is a little too long. Please shorten it and try again.',
   429: 'Chat is busy right now. Please wait a minute and try again.',
@@ -31,7 +31,7 @@ export class ChatService {
     }
 
     if (!response.ok) {
-      throw new Error(errorMessages[response.status] || genericErrorMessage)
+      throw new Error(chatErrorMessages[response.status] || genericErrorMessage)
     }
     if (typeof data?.answer !== 'string' || !data.answer.trim()) {
       throw new Error(genericErrorMessage)

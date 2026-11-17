@@ -1,13 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import heroMark from './assets/hero.png'
-import { ChatService } from './services/ChatService.js'
-import { ThemeService } from './services/ThemeService.js'
+import { useChat } from './application/useChat.js'
 import './App.css'
-
-const chatService = new ChatService({
-  endpoint: import.meta.env.VITE_GEMINI_API_URL || '/api/chat',
-})
-const themeService = new ThemeService()
 
 const sections = [
   { label: 'Me', icon: '☺', color: 'teal' },
@@ -17,19 +11,16 @@ const sections = [
   { label: 'Contact', icon: '↗', color: 'orange' },
 ]
 
-function App() {
+function App({ chatService, themeService }) {
   const [theme, setTheme] = useState('dark')
   const [chatOpen, setChatOpen] = useState(false)
-  const [messages, setMessages] = useState([])
-  const [question, setQuestion] = useState('')
-  const [error, setError] = useState('')
-  const [sending, setSending] = useState(false)
+  const { messages, question, setQuestion, error, sending, sendQuestion } = useChat(chatService)
   const dialogRef = useRef(null)
   const messagesRef = useRef(null)
 
   useEffect(() => {
     themeService.apply(theme)
-  }, [theme])
+  }, [theme, themeService])
 
   useEffect(() => {
     messagesRef.current?.scrollTo(0, messagesRef.current.scrollHeight)
@@ -43,31 +34,9 @@ function App() {
     }
   }, [chatOpen])
 
-  async function sendQuestion(event) {
+  function handleSubmit(event) {
     event.preventDefault()
-    const text = question.trim()
-    if (!text || sending) return
-
-    const conversation = [...messages, { role: 'user', text }]
-    setMessages(conversation)
-    setQuestion('')
-    setError('')
-    setSending(true)
-
-    try {
-      const answer = await chatService.ask(conversation)
-      setMessages((current) => [...current, { role: 'assistant', text: answer }])
-    } catch (requestError) {
-      setMessages((current) => current.slice(0, -1))
-      setQuestion(text)
-      setError(
-        requestError instanceof TypeError
-          ? 'We couldn’t connect to chat. Please check your internet connection and try again.'
-          : requestError.message || 'Chat couldn’t answer just now. Please try again in a few minutes.',
-      )
-    } finally {
-      setSending(false)
-    }
+    void sendQuestion()
   }
 
   return (
@@ -147,7 +116,7 @@ function App() {
           {sending && <p className="chat-status">Thinking…</p>}
           {error && <p className="chat-error" role="alert">{error}</p>}
         </div>
-        <form className="chat-form" onSubmit={sendQuestion}>
+        <form className="chat-form" onSubmit={handleSubmit}>
           <label className="visually-hidden" htmlFor="chat-question">Your question</label>
           <input
             id="chat-question"
